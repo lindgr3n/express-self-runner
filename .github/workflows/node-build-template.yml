@@ -21,14 +21,29 @@ on:
 
 env:
   # 👇 Provide a default artifact name for when this workflow is not called by the deployment workflow.
-  artifactName: ${{ inputs.artifactName || 'buildArtifact' }}
+  artifactName: ${{ inputs.artifactName || 'buildArtifactDefault' }}
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
     steps:
       - name: Checkout the repo source code
         uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      # - name: Build project
+      #   run: npm run build 
 
       # Steps to version, build, and test the code go here.
       - name: Zip project
