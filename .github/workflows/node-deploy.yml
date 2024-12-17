@@ -16,25 +16,28 @@ jobs:
   set-version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.get_version.outputs.version }}
-      build_number: ${{ steps.set_build_number.outputs.build_number }}
+    #   version: ${{ steps.get_version.outputs.version }}
+    #   build_number: ${{ steps.set_build_number.outputs.build_number }}
+      version: ${{ github.GITHUB_PACKAGE_VERSION }}
+      build_number: ${{ github.GITHUB_BUILD_NUMBER }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Get version from package.json
-      id: get_version
+      id: set_package_version
       run: |
         version=$(jq -r '.version' package.json)
-        echo "::set-output name=version::$version"
+        echo "package_version=$version" >> $GITHUB_PACKAGE_VERSION
     - name: Set build number
       id: set_build_number
-      run: echo "::set-output name=build_number::${{ github.run_number }}"
+      run: echo "build_number=${{ github.run_number }}" >> $GITHUB_BUILD_NUMBER
 
   # 👇 Call the build workflow to create the artifacts to deploy, and provide the artifact name.
   build-and-test:
     uses: ./.github/workflows/node-build-template.yml
     with:
-      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+    #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
+        artifactName: buildArtifact-${{ github.GITHUB_PACKAGE_VERSION }}-${{ github.GITHUB_BUILD_NUMBER }}
     secrets: inherit # Pass secrets to the build workflow, if necessary.
 
   deploy-to-dev:
@@ -43,7 +46,8 @@ jobs:
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
     with:
-      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+      #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
+      artifactName: buildArtifact-${{ github.GITHUB_PACKAGE_VERSION }}-${{ github.GITHUB_BUILD_NUMBER }}
       environmentName: dev
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
@@ -53,7 +57,8 @@ jobs:
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
     with:
-      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+      #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
+      artifactName: buildArtifact-${{ github.GITHUB_PACKAGE_VERSION }}-${{ github.GITHUB_BUILD_NUMBER }}
       environmentName: test
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
@@ -63,6 +68,7 @@ jobs:
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
     with:
-      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+      #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
+      artifactName: buildArtifact-${{ github.GITHUB_PACKAGE_VERSION }}-${{ github.GITHUB_BUILD_NUMBER }}
       environmentName: production
     secrets: inherit # Pass repository secrets to the deployment workflow.
