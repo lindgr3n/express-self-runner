@@ -16,11 +16,8 @@ jobs:
   set-version:
     runs-on: ubuntu-latest   
     steps:
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
-    # - name: Checkout code
-    #   uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
     # - name: Get version from package.json
     #   id: set_package_version
     #   run: |
@@ -29,7 +26,9 @@ jobs:
     # - name: Set build number
     #   id: set_build_number
     #   run: echo "build_number=${{ github.run_number }}" >> $GITHUB_ENV
-
+    - name: get-npm-version
+      id: package-version
+      uses: martinbeentjes/npm-get-version-action@v1.3.1
   # 👇 Call the build workflow to create the artifacts to deploy, and provide the artifact name.
   build-and-test:
     needs: set-version
