@@ -20,19 +20,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    # - name: Get version from package.json
-    #   id: set_package_version
-    #   run: |
-    #     version=$(jq -r '.version' package.json)
-    #     echo "package_version=$version" >> "$GITHUB_ENV"
-    # - name: Set build number
-    #   id: set_build_number
-    #   run: echo "build_number=${{ github.run_number }}" >> $GITHUB_ENV
-    - name: get-npm-version
-      id: package-version
-      uses: martinbeentjes/npm-get-version-action@v1.3.1
-    - name: set-env
-      run: echo "current-version=${{ steps.package-version.outputs.current-version }}" >> $GITHUB_ENV
+    - name: Get version from package.json
+      id: package_version
+      run: |
+        version=$(jq -r '.version' package.json)
+        echo "current-version=$version" >> $GITHUB_OUTPUT
+    # - name: get-npm-version
+    #   id: package-version
+    #   uses: martinbeentjes/npm-get-version-action@v1.3.1
   # 👇 Call the build workflow to create the artifacts to deploy, and provide the artifact name.
   build-and-test:
     needs: set-version
