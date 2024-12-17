@@ -1,0 +1,68 @@
+name: node-build-and-deploy
+
+on:
+  # Trigger the workflow on a push to the main branch.
+  push:
+    branches: main
+
+  # Allows you to run this workflow manually (for any branch) from the Actions tab.
+  workflow_dispatch:
+
+env:
+  # 👇 Set the artifact name that will be used by the build and deployments, so it is now only defined in one place.
+  artifactName: buildArtifact
+
+jobs:
+  set-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      build_number: ${{ steps.set_build_number.outputs.build_number }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Get version from package.json
+      id: get_version
+      run: |
+        version=$(jq -r '.version' package.json)
+        echo "::set-output name=version::$version"
+    - name: Set build number
+      id: set_build_number
+      run: echo "::set-output name=build_number::${{ github.run_number }}"
+
+  # 👇 Call the build workflow to create the artifacts to deploy, and provide the artifact name.
+  build-and-test:
+    uses: ./.github/workflows/node-build-template.yml
+    with:
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+    secrets: inherit # Pass secrets to the build workflow, if necessary.
+
+  deploy-to-dev:
+    # Only run this deploy job after the build-and-test job completes successfully.
+    needs: build-and-test
+    # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
+    uses: ./.github/workflows/node-deploy-template.yml
+    with:
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+      environmentName: dev
+    secrets: inherit # Pass repository secrets to the deployment workflow.
+
+  deploy-to-test:
+    # Only run this deploy job after the build-and-test job completes successfully.
+    needs: deploy-to-dev
+    # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
+    uses: ./.github/workflows/node-deploy-template.yml
+    with:
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+      environmentName: test
+    secrets: inherit # Pass repository secrets to the deployment workflow.
+
+  deploy-to-production:
+    # Only run this deploy job after the deploy-to-staging job completes successfully.
+    needs: deploy-to-test
+    # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
+    uses: ./.github/workflows/node-deploy-template.yml
+    with:
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-build${{ needs.set-version.outputs.build_number }}
+      environmentName: production
+    secrets: inherit # Pass repository secrets to the deployment workflow.
