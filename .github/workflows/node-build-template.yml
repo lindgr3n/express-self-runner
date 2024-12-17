@@ -31,7 +31,9 @@ jobs:
         node-version: [22]
     steps:
       - name: log
-        run: "echo artifactName: ${{ env }} : ${{ github }}"
+        run: "echo artifactName: ${{ toJson(env) }} : ${{ toJson(github) }}"
+      - name: logContext
+        run: "echo $GITHUB_CONTEXT"
       - name: Checkout the repo source code
         uses: actions/checkout@v3
       - name: Set up Node.js

@@ -35,7 +35,7 @@ jobs:
     uses: ./.github/workflows/node-build-template.yml
     with:
     #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
-      artifactName: buildArtifact-${{ needs.set-version.outputs.current-version}}-${{ github.run_id }}
+      artifactName: buildArtifact-${{ needs.package-version.outputs.current-version}}-${{ github.run_id }}
     secrets: inherit # Pass secrets to the build workflow, if necessary.
 
   deploy-to-dev:
