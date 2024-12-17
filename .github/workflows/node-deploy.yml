@@ -14,20 +14,18 @@ env:
 
 jobs:
   set-version:
-    runs-on: ubuntu-latest
-    outputs:
-    #   version: ${{ steps.get_version.outputs.version }}
-    #   build_number: ${{ steps.set_build_number.outputs.build_number }}
-      version: ${{ github.package_version }}
-    #   build_number: ${{ github.build_number }}
+    runs-on: ubuntu-latest   
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Get version from package.json
-      id: set_package_version
-      run: |
-        version=$(jq -r '.version' package.json)
-        echo "package_version=$version" >> $GITHUB_ENV
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+    # - name: Checkout code
+    #   uses: actions/checkout@v4
+    # - name: Get version from package.json
+    #   id: set_package_version
+    #   run: |
+    #     version=$(jq -r '.version' package.json)
+    #     echo "package_version=$version" >> "$GITHUB_ENV"
     # - name: Set build number
     #   id: set_build_number
     #   run: echo "build_number=${{ github.run_number }}" >> $GITHUB_ENV
@@ -38,7 +36,7 @@ jobs:
     uses: ./.github/workflows/node-build-template.yml
     with:
     #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
-      artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ github.run_id }}
+      artifactName: buildArtifact-${{ needs.package-version.outputs.current-version}}-${{ github.run_id }}
     secrets: inherit # Pass secrets to the build workflow, if necessary.
 
   deploy-to-dev:
