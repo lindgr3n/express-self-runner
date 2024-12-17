@@ -34,6 +34,7 @@ jobs:
 
   # 👇 Call the build workflow to create the artifacts to deploy, and provide the artifact name.
   build-and-test:
+    needs: set-version
     uses: ./.github/workflows/node-build-template.yml
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
