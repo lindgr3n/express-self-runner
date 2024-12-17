@@ -30,8 +30,6 @@ jobs:
       matrix:
         node-version: [22]
     steps:
-      - name: log
-        run: "echo artifactName: ${{ toJson(env) }} : ${{ toJson(github) }}"
       - name: Checkout the repo source code
         uses: actions/checkout@v3
       - name: Set up Node.js

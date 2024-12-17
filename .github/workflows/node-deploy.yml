@@ -14,7 +14,9 @@ env:
 
 jobs:
   set-version:
-    runs-on: ubuntu-latest   
+    runs-on: ubuntu-latest  
+    outputs:
+      version: ${{ steps.package-version.outputs.current-version }} 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -35,7 +37,7 @@ jobs:
     uses: ./.github/workflows/node-build-template.yml
     with:
     #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
-      artifactName: buildArtifact-${{ needs.package-version.outputs.current-version}}-${{ github.run_id }}
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
     secrets: inherit # Pass secrets to the build workflow, if necessary.
 
   deploy-to-dev:
