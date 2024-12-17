@@ -36,7 +36,6 @@ jobs:
     needs: set-version
     uses: ./.github/workflows/node-build-template.yml
     with:
-    #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
     secrets: inherit # Pass secrets to the build workflow, if necessary.
 
@@ -46,8 +45,7 @@ jobs:
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
     with:
-      #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
-      artifactName: buildArtifact-${{ github.package_version }}-${{ github.run_id }}
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: dev
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
@@ -57,8 +55,7 @@ jobs:
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
     with:
-      #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
-      artifactName: buildArtifact-${{ github.package_version }}-${{ github.run_id }}
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: test
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
@@ -68,7 +65,6 @@ jobs:
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
     with:
-      #   artifactName: buildArtifact-${{ needs.set-version.outputs.version }}-${{ needs.set-version.outputs.build_number }}
-      artifactName: buildArtifact-${{ github.GITHUB_PACKAGE_VERSION }}-${{ github.run_id }}
+      artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: production
     secrets: inherit # Pass repository secrets to the deployment workflow.
