@@ -23,6 +23,7 @@ jobs:
     # 👇 Allows using variables and secrets defined in the provided environment.
     environment: ${{ inputs.environmentName }}
     steps:
+        # TODO: Should we remove all files here first or do that in cleanup? Enough to just overwrite? Can get a issue with files that are deleted
         # Steps to deploy the code go here.
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -47,6 +48,7 @@ jobs:
             }
       - name: Copy artifacts
         shell: pwsh
+        # TODO: Could need to remove old files in target folder before copying the new ones?
         run: |
           md -Force ${{ inputs.path }} | Out-Null
           Get-ChildItem ./ | Copy-item -Force -Recurse -Destination ${{ inputs.path }}
@@ -58,11 +60,3 @@ jobs:
                 Start-Sleep -Seconds 5
                 Remove-Item -Path ${{ inputs.path }}\app_offline.htm
             }
-      # - uses: ChristopheLav/iis-deploy@v1
-      #   with:
-      #     website-name: 'node-self-host'
-      #     msdeploy-service-url: ${{ secrets.MSDEPLOY_URL }}
-      #     msdeploy-username: ${{ secrets.MSDEPLOY_USERNAME }}
-      #     msdeploy-password: ${{ secrets.MSDEPLOY_PASSWORD }}
-      #     source-path: ${{ github.workspace }}\website\publish
-      #     skip-extra-files: false
