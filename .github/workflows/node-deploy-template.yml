@@ -28,7 +28,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.artifactName }}
-          path: ./buildArtifact
+          path: ./
       # - name: Substitute variables
       #   uses: microsoft/variable-substitution@v1
       #   with:
@@ -49,7 +49,7 @@ jobs:
         shell: pwsh
         run: |
           md -Force ${{ inputs.path }} | Out-Null
-          Get-ChildItem ./buildArtifact | Copy-item -Force -Recurse -Destination ${{ inputs.path }}
+          Get-ChildItem ./ | Copy-item -Force -Recurse -Destination ${{ inputs.path }}
 
       - name: Start App pool
         shell: pwsh
