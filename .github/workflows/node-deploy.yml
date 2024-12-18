@@ -43,17 +43,27 @@ jobs:
     needs: [set-version, build-and-test]
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
+    # Only run this job if the branch name starts with 'dev'. 
+    if: startsWith(github.ref, 'refs/heads/dev')
+    # Ensures that only one instance of the workflow runs per branch or tag 
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: dev
       path: C:\Development\iis\node_self_host
     secrets: inherit # Pass repository secrets to the deployment workflow.
-
+  
   deploy-to-test:
     # Only run this deploy job after the build-and-test job completes successfully.
-    needs: [set-version, deploy-to-dev]
+    needs: [set-version, build-and-test]
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
+    # Only run this job if the branch name starts with 'test'. 
+    if: startsWith(github.ref, 'refs/heads/test')
+    # Ensures that only one instance of the workflow runs per branch or tag 
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: test
@@ -61,10 +71,15 @@ jobs:
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
   deploy-to-production:
-    # Only run this deploy job after the deploy-to-staging job completes successfully.
-    needs: [set-version, deploy-to-test]
+    # Only run this deploy job after the build-and-test job completes successfully.
+    needs: [set-version, build-and-test]
     # 👇 Call the deploy template with the proper environment name to deploy the artifacts.
     uses: ./.github/workflows/node-deploy-template.yml
+    # Only run this job if the branch name starts with 'main'. 
+    if: startsWith(github.ref, 'refs/heads/main')
+    # Ensures that only one instance of the workflow runs per branch or tag 
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: production
