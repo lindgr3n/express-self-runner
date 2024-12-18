@@ -46,6 +46,7 @@ jobs:
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: dev
+      path: C:\Development\iis\node_self_host
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
   deploy-to-test:
@@ -56,6 +57,7 @@ jobs:
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: test
+      path: C:\Development\iis\node_self_host
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
   deploy-to-production:
@@ -66,4 +68,5 @@ jobs:
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: production
+      path: C:\Development\iis\node_self_host
     secrets: inherit # Pass repository secrets to the deployment workflow.
