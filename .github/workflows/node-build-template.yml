@@ -46,8 +46,8 @@ jobs:
       #   run: npm run build 
 
       # Steps to version, build, and test the code go here.
-      - name: Zip project
-        run: zip -r ${{ env.artifactName }}.zip .
+      # - name: Zip project
+      #   run: zip -r ${{ env.artifactName }}.zip .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
