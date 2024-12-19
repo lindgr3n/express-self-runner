@@ -14,6 +14,7 @@ env:
 
 jobs:
   set-version:
+    # For node im not sure if it is necessary to set the version on the artifact name. Could be good in .net projects where we can update the manifest
     runs-on: ubuntu-latest  
     outputs:
       version: ${{ steps.package-version.outputs.current-version }} 
@@ -51,7 +52,7 @@ jobs:
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: dev
-      path: C:\Development\iis\node_self_host
+      path: ${{ vars.PATH }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
   
   deploy-to-test:
@@ -67,7 +68,7 @@ jobs:
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: test
-      path: C:\Development\iis\node_self_host
+      path: ${{ vars.PATH }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
   deploy-to-production:
@@ -83,5 +84,17 @@ jobs:
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
       environmentName: production
-      path: C:\Development\iis\node_self_host
+      path: ${{ vars.PATH }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
+  
+  # cleanup:
+  #   name: 🧹 Cleanup
+  #   needs: [set-version, deploy-to-dev, deploy-to-test, deploy-to-production]
+  #   # Ensures that the step always will run, regardless of the outcome of previous jobs or steps
+  #   if: always()
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: geekyeggo/delete-artifact@v2
+  #       with:
+  #         name: |
+  #           buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
