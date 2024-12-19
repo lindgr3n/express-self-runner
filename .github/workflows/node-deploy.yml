@@ -16,7 +16,6 @@ jobs:
   set-version:
     # For node im not sure if it is necessary to set the version on the artifact name. Could be good in .net projects where we can update the manifest
     runs-on: ubuntu-latest
-    environment: production
     outputs:
       version: ${{ steps.package-version.outputs.current-version }} 
     steps:
@@ -34,6 +33,7 @@ jobs:
     - name: Dump GitHub vars  context
       env:
         GITHUB_CONTEXT_VARS: ${{ toJson(vars) }}
+      # Only prints value if the environment property is set
       run: echo "$GITHUB_CONTEXT_VARS"
     # - name: get-npm-version
     #   id: package-version
@@ -60,7 +60,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
-      environmentName: dev
+      environment: dev
       path: ${{ vars.PATH }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
   
@@ -76,7 +76,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
-      environmentName: test
+      environment: test
       path: ${{ vars.PATH }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
@@ -92,7 +92,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
-      environmentName: production
+      environment: production
       path: ${{ vars.PATH }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
   
