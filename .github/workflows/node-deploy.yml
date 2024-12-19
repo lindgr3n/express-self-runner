@@ -15,7 +15,8 @@ env:
 jobs:
   set-version:
     # For node im not sure if it is necessary to set the version on the artifact name. Could be good in .net projects where we can update the manifest
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+    environment: production
     outputs:
       version: ${{ steps.package-version.outputs.current-version }} 
     steps:
