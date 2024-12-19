@@ -26,6 +26,14 @@ jobs:
       run: |
         version=$(jq -r '.version' package.json)
         echo "current-version=$version" >> $GITHUB_OUTPUT
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+    - name: Dump GitHub vars  context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(vars) }}
+      run: echo "$GITHUB_VARS"
     # - name: get-npm-version
     #   id: package-version
     #   uses: martinbeentjes/npm-get-version-action@v1.3.1
