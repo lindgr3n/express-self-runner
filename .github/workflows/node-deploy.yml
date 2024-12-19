@@ -32,8 +32,8 @@ jobs:
       run: echo "$GITHUB_CONTEXT"
     - name: Dump GitHub vars  context
       env:
-        GITHUB_CONTEXT: ${{ toJson(vars) }}
-      run: echo "$GITHUB_VARS"
+        GITHUB_CONTEXT_VARS: ${{ toJson(vars) }}
+      run: echo "$GITHUB_CONTEXT_VARS"
     # - name: get-npm-version
     #   id: package-version
     #   uses: martinbeentjes/npm-get-version-action@v1.3.1
