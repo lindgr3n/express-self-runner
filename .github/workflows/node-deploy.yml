@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.package-version.outputs.current-version }} 
+    #environment: production
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -60,8 +61,10 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
-      environment: dev
-      path: ${{ vars.PATH }}
+      environmentName: dev
+      # Somehow we need to set the correct environment property to make this work
+      #path: ${{ vars.PATH }}
+      path: ${{ vars.PATH_DEV }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
   
   deploy-to-test:
@@ -76,8 +79,9 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
-      environment: test
-      path: ${{ vars.PATH }}
+      environmentName: test
+      #path: ${{ vars.PATH }}
+      path: ${{ vars.PATH_TEST }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
 
   deploy-to-production:
@@ -92,8 +96,9 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     with:
       artifactName: buildArtifact-${{ needs.set-version.outputs.version}}-${{ github.run_id }}
-      environment: production
-      path: ${{ vars.PATH }}
+      environmentName: production
+      #path: ${{ vars.PATH }}
+      path: ${{ vars.PATH_PROD }}
     secrets: inherit # Pass repository secrets to the deployment workflow.
   
   # cleanup:

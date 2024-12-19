@@ -8,7 +8,7 @@ on:
         description: The name of the artifact to download and deploy.
         required: true
         type: string
-      environment:
+      environmentName:
         description: The name of the environment to deploy to.
         required: true
         type: string
@@ -21,7 +21,7 @@ jobs:
     name: Deploy to IIS
     runs-on: self-hosted
     # 👇 Allows using variables and secrets defined in the provided environment.
-    environment: ${{ inputs.environment }}
+    environment: ${{ inputs.environmentName }}
     steps:
         # TODO: Should we remove all files here first or do that in cleanup? Enough to just overwrite? Can get a issue with files that are deleted
         # Steps to deploy the code go here.
